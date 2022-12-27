@@ -110,4 +110,46 @@ app.get('/clientes', (req, res) => {
     })
 })
 
+
+app.post('/abogados', (req,res) => {
+
+    const paterno = req.body.paterno;
+    const materno = req.body.materno;
+    const nombre = req.body.nombre;
+    const rfc = req.body.rfc;
+    const cedula = req.body.cedula;
+    const id_grado = req.body.id_grado;
+
+    connection.query('INSERT INTO abogado set ? ', {
+        paterno: paterno,
+        materno: materno,
+        nombre: nombre,
+        rfc: rfc,
+        cedula: cedula,
+        id_grado: id_grado
+
+    }, async (err) => {
+        if (err) {
+            res.send({ msg: err });
+        } else {
+            res.send({ msg: 'Registro Exitoso' });
+
+        }
+    })
+
+}
+
+)
+
+app.get('/estudio', (req,res) => {
+    connection.query("SELECT * FROM estudio", (err, rows) => {
+        if (!rows.length) {
+            res.status(403);
+        }
+        else {
+            res.json(rows)
+        }
+    })
+});
+
 app.listen(9090, () => console.log('Server Enabled to http://localhost:9090'))

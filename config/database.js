@@ -5,6 +5,7 @@ let connections = {
     database: "buffette"
 }
 
+
 const mysql = require('mysql');
 
 const connection = mysql.createConnection(
