@@ -45,7 +45,7 @@ app.post('/sigIn', (req, res) => {
                 console.log(err)
             }
 
-            if (rows == null) {
+            if (!rows.length) {
                 return res.send("Usuario y/o clave no valida");
             }
             else {
