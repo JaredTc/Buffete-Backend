@@ -1,7 +1,7 @@
 // import {DB_HOST} from '../config';
 const DB_HOST = require('../config')
 
-const mysql = require('mysql');
+const mysql = require('mysql2');
 
 const connection = mysql.createConnection(
     {
