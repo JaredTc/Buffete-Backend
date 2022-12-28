@@ -92,30 +92,11 @@ app.post('/signUp', (req, res) => {
     })
 })
 
-//Seleccionar los tipos de datos
-app.get('/tipoAsuntos', (req, res) => {
-    connection.query('SELECT id_tipo_asunto, descripcion FROM tipo_asunto', (err, rows) => {
-        if (rows == null) {
-            res.status(403);
-        }
-        else {
-            res.json(rows)
-        }
-    })
-})
-
-//informacion de los clientes
-app.get('/clientes', (req, res) => {
-    connection.query('SELECT * FROM cliente', (err, rows) => {
-        if (rows == null) {
-            res.status(403);
-        } else {
-            res.json(rows)
-        }
-    })
-})
 
 
+
+
+// INSERT ABOGADOS
 app.post('/abogados', (req,res) => {
 
     const paterno = req.body.paterno;
@@ -145,6 +126,82 @@ app.post('/abogados', (req,res) => {
 }
 
 )
+
+
+//Seleccionar los tipos de datos
+app.get('/tipoAsuntos', (req, res) => {
+    connection.query('SELECT id_tipo_asunto, descripcion FROM tipo_asunto', (err, rows) => {
+        if (rows == null) {
+            res.status(403);
+        }
+        else {
+            res.json(rows)
+        }
+    })
+})
+//informacion de los clientes
+app.get('/clientes', (req, res) => {
+    connection.query('SELECT * FROM cliente', (err, rows) => {
+        if (rows == null) {
+            res.status(403);
+        } else {
+            res.json(rows)
+        }
+    })
+})
+// GET ABOGADOS
+app.get('/abogado', (req,res) => {
+    connection.query("SELECT ab.*, et.descripcion FROM abogado ab , estudio et WHERE ab.id_grado = et.id_grado ORDER BY id_abogado ASC", (err, rows) => {
+        if (rows == null) {
+            res.status(403);
+        }
+        else {
+            res.json(rows)
+        }
+    })
+})
+
+app.get('/asesoria', (req,res) => {
+    connection.query("SELECT * FROM asesora", (err, rows) => {
+        if (rows == null) {
+            res.status(403);
+        }
+        else {
+            res.json(rows)
+        }
+    })
+})
+app.get('/audiencias', (req,res) => {
+    connection.query("SELECT * FROM audiencia", (err, rows) => {
+        if (rows == null) {
+            res.status(403);
+        }
+        else {
+            res.json(rows)
+        }
+    })
+})
+app.get('/asuntos', (req,res) => {
+    connection.query("SELECT * FROM asunto", (err, rows) => {
+        if (rows == null) {
+            res.status(403);
+        }
+        else {
+            res.json(rows)
+        }
+    })
+})
+app.get('/demandados', (req,res) => {
+    connection.query("SELECT * FROM demandado", (err, rows) => {
+        if (rows == null) {
+            res.status(403);
+        }
+        else {
+            res.json(rows)
+        }
+    })
+})
+
 
 app.get('/estudio', (req,res) => {
     connection.query("SELECT * FROM estudio", (err, rows) => {
