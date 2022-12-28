@@ -106,8 +106,8 @@ app.get('/tipoAsuntos', (req, res) => {
 
 //informacion de los clientes
 app.get('/clientes', (req, res) => {
-    connection.query('SELECT * FROM CLIENTE', (err, rows) => {
-        if (!rows) {
+    connection.query('SELECT * FROM cliente', (err, rows) => {
+        if (rows == null) {
             res.status(403);
         } else {
             res.json(rows)
