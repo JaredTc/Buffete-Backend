@@ -21,7 +21,7 @@ app.get('/', (req, res) => {
     //         res.json({ msg: err })
     //     }
 
-    //     if (!rows.length) {
+    //     if (rows == null) {
     //         return res.status(403)
     //     }
     //     else {
@@ -45,7 +45,7 @@ app.post('/sigIn', (req, res) => {
                 console.log(err)
             }
 
-            if (!rows.length) {
+            if (rows == null) {
                 return res.send("Usuario y/o clave no valida");
             }
             else {
@@ -95,7 +95,7 @@ app.post('/signUp', (req, res) => {
 //Seleccionar los tipos de datos
 app.get('/tipoAsuntos', (req, res) => {
     connection.query('SELECT id_tipo_asunto, descripcion FROM tipo_asunto', (err, rows) => {
-        if (!rows.length) {
+        if (rows == null) {
             res.status(403);
         }
         else {
@@ -148,7 +148,7 @@ app.post('/abogados', (req,res) => {
 
 app.get('/estudio', (req,res) => {
     connection.query("SELECT * FROM estudio", (err, rows) => {
-        if (!rows.length) {
+        if (rows == null) {
             res.status(403);
         }
         else {
@@ -157,4 +157,4 @@ app.get('/estudio', (req,res) => {
     })
 });
 
-app.listen(PORT.PORT, () => console.log(`Server Enabled to http://localhost:${PORT.PORT}/`))
+app.listen(PORT.PORT, () => console.log(`Server Enabled to ${PORT.PORT}`))
