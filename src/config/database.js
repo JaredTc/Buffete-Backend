@@ -1,9 +1,9 @@
 // import {DB_HOST} from '../config';
 const DB_HOST = require('../config')
+const createPool = require('mysql2/promise')
 
-const mysql = require('mysql');
 
-const connection = mysql.createConnection(
+const connection = createPool(
     {
         host: DB_HOST.DB_HOST,
         user: DB_HOST.DB_USER,
