@@ -13,26 +13,24 @@ app.use(cors());
 app.use(bodyParser.json());
 
 //ver las tablas de las base de datos
-app.get('/', async (req, res) => {
+app.get('/', (req, res) => {
 
     // res.send('WELCOME TO SERVER')
-    const [rows] = await pool.query('SELECT * FROM cliente')
-    res.json(rows)
-    // connection.query("SHOW TABLES", async (err, rows) => {
-    //     if (err) {
-    //         res.json({ msg: err })
-    //     }
+    connection.query("SHOW TABLES", async (err, rows) => {
+        if (err) {
+            res.json({ msg: err })
+        }
 
-    //     if (!rows) {
-    //         return res.status(403)
-    //     }
-    //     else {
-    //         res.send({
-    //             msg: 'Query Success',
-    //             data: rows
-    //         })
-    //     }
-    // })
+        if (!rows) {
+            return res.status(403)
+        }
+        else {
+            res.send({
+                msg: 'Query Success',
+                data: rows
+            })
+        }
+    })
 
 })
 
