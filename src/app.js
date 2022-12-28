@@ -15,22 +15,22 @@ app.use(bodyParser.json());
 //ver las tablas de las base de datos
 app.get('/', (req, res) => {
 
-    res.send('WELCOME TO SERVER')
-    // connection.query("SHOW TABLES", async (err, rows) => {
-    //     if (err) {
-    //         res.json({ msg: err })
-    //     }
+    // res.send('WELCOME TO SERVER')
+    connection.query("SHOW TABLES", async (err, rows) => {
+        if (err) {
+            res.json({ msg: err })
+        }
 
-    //     if (rows == null) {
-    //         return res.status(403)
-    //     }
-    //     else {
-    //         res.send({
-    //             msg: 'Query Success',
-    //             data: rows
-    //         })
-    //     }
-    // })
+        if (!rows) {
+            return res.status(403)
+        }
+        else {
+            res.send({
+                msg: 'Query Success',
+                data: rows
+            })
+        }
+    })
 
 })
 
