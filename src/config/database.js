@@ -1,22 +1,14 @@
 // import {DB_HOST} from '../config';
 const DB_HOST = require('../config')
-let connections = {
-    host: DB_HOST.DB_HOST,
-    user: DB_HOST.DB_USER,
-    password: DB_HOST.DB_PASSWORD,
-    database: DB_HOST.DB_NAME
-}
-
 
 const mysql = require('mysql');
 
 const connection = mysql.createConnection(
     {
-        host: connections.host,
-        user: connections.user,
-        password: connections.password,
-        database: connections.database
-    
+        host: DB_HOST.DB_HOST,
+        user: DB_HOST.DB_USER,
+        password: DB_HOST.DB_PASSWORD,
+        database: DB_HOST.DB_NAME
 
     }
 
