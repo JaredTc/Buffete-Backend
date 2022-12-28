@@ -1,8 +1,10 @@
+// import {DB_HOST} from '../config';
+const DB_HOST = require('../config')
 let connections = {
-    host: "localhost",
-    user: "root",
-    password: "",
-    database: "buffette"
+    host: DB_HOST.DB_HOST,
+    user: DB_HOST.DB_USER,
+    password: DB_HOST.DB_PASSWORD,
+    database: DB_HOST.DB_NAME
 }
 
 

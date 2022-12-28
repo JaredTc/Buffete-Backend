@@ -1,9 +1,13 @@
 const express = require('express');
-const app = express();
 const jwt = require('jsonwebtoken')
 const cors = require('cors');
+
+const app = express();
 const bodyParser = require('body-parser');
+
 const connection = require('./config/database');
+
+const PORT = require('./config.js')
 
 app.use(cors());
 app.use(bodyParser.json());
@@ -152,4 +156,4 @@ app.get('/estudio', (req,res) => {
     })
 });
 
-app.listen(9090, () => console.log('Server Enabled to http://localhost:9090'))
+app.listen(PORT.PORT, () => console.log(`Server Enabled to http://localhost:${PORT.PORT}/`))
