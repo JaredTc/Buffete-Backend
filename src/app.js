@@ -597,7 +597,7 @@ app.delete('/abogado/:id', (req, res) => {
     try {
         const  id_abogado  = req.params;
       
-        connection.query('DELETE FROM abogado WHERE id_abogado = ?', [id_abogado.id], async (err) => {
+        connection.query('DELETE FROM abogado WHERE id_abogado = ?', [id_abogado.id],  (err) => {
            
             if (err) {
 
