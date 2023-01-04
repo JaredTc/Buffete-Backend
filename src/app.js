@@ -694,7 +694,7 @@ app.delete('/demandado/:id', (req,res) => {
     try {
 
         const id_persona = req.params;
-        connection.query('DELETE FROM persona WHERE id_persona = ? ', [id_persona.id], (err) => {
+        connection.query('DELETE FROM persona WHERE id_demandado = ? ', [id_persona.id], (err) => {
 
             if (err) {
                  res.status(500)
