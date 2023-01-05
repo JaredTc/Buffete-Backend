@@ -558,7 +558,7 @@ app.get('/queryAsuntos', (req, res) => {
       AND asn.id_tipo_asu = ta.id_tipo_asunto
       AND asn.id_abogado = ab.id_abogado
       AND asn.id_demandado = ps.id_demandado
-      GROUP BY Asuntos;`, (err, rows) => {
+      `, (err, rows) => {
         if (rows == null) {
             res.status(403);
         }
