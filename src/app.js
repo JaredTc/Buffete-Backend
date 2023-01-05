@@ -169,6 +169,7 @@ app.post('/audiencia', (req, res) => {
     const resolucion = req.body.resolucion;
     const id_asunto = req.body.id_asunto;
 
+
     connection.query('INSERT INTO audiencia SET ?', {
         id_lugar: id_lugar,
         fecha: fecha,
@@ -638,7 +639,7 @@ app.delete('/audiencias/:id', (req,res) => {
 
     try {
         const id_audiencia = req.params;
-        console.log(id_audiencia.id)
+        
         connection.query('DELETE FROM audiencia WHERE id_audiencia = ? ', [id_audiencia.id], (err) => {
 
             if (err) {
@@ -656,7 +657,8 @@ app.delete('/asuntos/:id', (req,res) => {
 
     try {
         const id_asunto = req.params;
-        console.log(id_audiencia.id)
+   
+        
         connection.query('DELETE FROM asunto WHERE id_asunto = ? ', [id_asunto.id], (err) => {
 
             if (err) {
@@ -670,25 +672,27 @@ app.delete('/asuntos/:id', (req,res) => {
         
     }
 })
+
 //END POINT FOR DELETE CLIENTES
-app.delete('/clientes/:id', (req,res) => {
+app.delete('/delete/cliente/:id', (req,res) => {
 
-    try {
 
-        const id_cliente = req.params;
-        connection.query('DELETE FROM cliente WHERE id_cliente = ? ', [id_cliente.id], (err) => {
+    const { id } = req.params
+   
 
-            if (err) {
-                 res.status(500)
-            } else {
+    connection.query('DELETE FROM cliente WHERE id_cliente = ?', [id], (e) => {
+        if (e) {
+            res.status(500).send({msg: 'Error'})
+        } else {
+            res.status(200).send({ msg: 'Registro Eliminado con Exito'})
+        }
 
-                res.status(200).send( { msg: 'Cliente Eliminada Correctamente'})
-            }
-        })
-    } catch (error) {
-        
-    }
+
+    })
+
 })
+
+
 app.delete('/demandado/:id', (req,res) => {
 
     try {
