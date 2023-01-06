@@ -45,11 +45,11 @@ app.post('/sigIn', (req, res) => {
                 console.log(err)
             }
 
-            if (!rows.length) {
+            if (rows == null) {
                 return res.send("Usuario y/o clave no valida");
             }
             else {
-                console.log(rows)
+                // console.log(rows)
 
                 jwt.sign(n_usuario, 'secret_key', (err, token) => {
 
@@ -712,6 +712,8 @@ app.delete('/demandado/:id', (req,res) => {
     }
 })
 
-
+app.put('/update/abogado/:id', (req,res) => {
+    
+})
 
 app.listen(PORT.PORT, () => console.log(`Server Enabled to ${PORT.PORT}`))
