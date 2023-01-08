@@ -1,96 +1,26 @@
 const express = require('express');
 const jwt = require('jsonwebtoken')
 const cors = require('cors');
-
 const app = express();
 const bodyParser = require('body-parser');
-
 const connection = require('./config/database');
+const PORT = require('./config.js');
+const router = require('./routes/routes')
+const controller = require('./controllers/app.controller');
 
-const PORT = require('./config.js')
+
 
 app.use(cors());
 app.use(bodyParser.json());
-
+router(app);
 //ver las tablas de las base de datos
-app.get('/', (req, res) => {
-
-    // res.send('WELCOME TO SERVER')
-    connection.query("SHOW TABLES", async (err, rows) => {
-        if (err) {
-            res.status(200).send({ msg: err })
-        }
-
-        if (!rows) {
-            return res.status(403)
-        }
-        else {
-            res.send({
-                msg: 'Query Success',
-                data: rows
-            })
-        }
-    })
-
-})
+// app.get('/', controller.inde)
 
 //Validacion de inicio de sesion
-app.post('/sigIn', (req, res) => {
-    const n_usuario = req.body.username;
-    const u_password = req.body.password
-
-    connection.query('SELECT n_usuario, u_password FROM usuarios WHERE n_usuario = ? AND u_password = ?',
-        [n_usuario, u_password], async (err, rows) => {
-            if (err) {
-                console.log(err)
-            }
-
-            if (rows == null) {
-                return res.send("Usuario y/o clave no valida");
-            }
-            else {
-                // console.log(rows)
-
-                jwt.sign(n_usuario, 'secret_key', (err, token) => {
-
-                    if (err) {
-                        res.status(400).send({ msg: 'Error' });
-                    }
-                    else {
-                        res.send({
-                            status: 200,
-                            msg: 'Succes',
-                            data: {
-                                user: n_usuario,
-                                token: token
-                            }
-                        })
-                    }
-                    res.end();
-                })
-
-            }
-        });
-
-})
+// app.post('/sigIn', controller.login)
 
 //Insertar Usuarios
-app.post('/signUp', (req, res) => {
-    const username = req.body.username;
-    const password = req.body.password
-
-    connection.query('INSERT INTO usuarios SET ?', {
-        n_usuario: username,
-        u_password: password
-    }, async (err) => {
-        if (err) {
-            res.send({ msg: err });
-        } else {
-            res.send({ msg: 'Registro Exitoso' });
-
-        }
-    })
-})
+app.post('/signUp', controller.signUp);
 
 
 
@@ -98,6 +28,7 @@ app.post('/signUp', (req, res) => {
 
 // INSERT ABOGADOS
 app.post('/abogados', (req, res) => {
+
 
     const paterno = req.body.paterno;
     const materno = req.body.materno;
@@ -422,48 +353,23 @@ function InsertarEmail(id_cliente, cuenta) {
 
 
 //Seleccionar los tipos de datos
-app.get('/tipoAsuntos', (req, res) => {
-    connection.query('SELECT id_tipo_asunto, descripcion FROM tipo_asunto', (err, rows) => {
-        if (rows == null) {
-            res.status(403);
-        }
-        else {
-            res.status(200).send(rows)
-        }
-    })
-})
+// app.get('/tipoAsuntos', (req, res) => {
+//     connection.query('SELECT id_tipo_asunto, descripcion FROM tipo_asunto', (err, rows) => {
+//         if (rows == null) {
+//             res.status(403);
+//         }
+//         else {
+//             res.status(200).send(rows)
+//         }
+//     })
+// })
+app.get('/tipoAsuntos', controller.tipoAsuntos);
 //informacion de los clientes
-app.get('/clientes', (req, res) => {
-    connection.query('SELECT * FROM cliente', (err, rows) => {
-        if (rows == null) {
-            res.status(403);
-        } else {
-            res.status(200).send(rows)
-        }
-    })
-})
-app.get('/qcliente', (req, res) => {
-
-    connection.query('SELECT cl.*, em.cuenta, tl.numero, fb.usuario FROM cliente cl, correo em, facebook fb, telefono tl, contacto cn WHERE cl.id_cliente = cn.id_cliente AND  em.id_contacto = cn.id_contacto AND tl.id_contacto = cn.id_contacto AND fb.id_contacto = cn.id_contacto',
-        (err, rows) => {
-            if (rows == null) {
-                res.send()
-            } else {
-                res.status(200).send(rows)
-            }
-        })
-})
+app.get('/clientes', controller.clientes);
+// INFORMACION ESÉCIFICA DE LOS CLIENTES
+app.get('/qcliente', controller.qcliente)
 // GET ABOGADOS
-app.get('/abogado', (req, res) => {
-    connection.query("SELECT ab.*, et.descripcion FROM abogado ab , estudio et WHERE ab.id_grado = et.id_grado ORDER BY id_abogado ASC", (err, rows) => {
-        if (rows == null) {
-            res.status(403);
-        }
-        else {
-            res.status(200).send(rows)
-        }
-    })
-})
+app.get('/abogado', controller.getAbogados)
 
 app.get('/asesoria', (req, res) => {
     connection.query("SELECT ase.*, ab.nombre  FROM asesora ase, abogado ab WHERE ase.asesorado = ab.id_abogado", (err, rows) => {
@@ -596,10 +502,10 @@ app.delete('/abogado/:id', (req, res) => {
 
 
     try {
-        const  id_abogado  = req.params;
-      
-        connection.query('DELETE FROM abogado WHERE id_abogado = ?', [id_abogado.id],  (err) => {
-           
+        const id_abogado = req.params;
+
+        connection.query('DELETE FROM abogado WHERE id_abogado = ?', [id_abogado.id], (err) => {
+
             if (err) {
 
                 res.status(500)
@@ -610,81 +516,81 @@ app.delete('/abogado/:id', (req, res) => {
         })
 
     } catch (error) {
-        
+
     }
 })
 
 // DELETE ASESORIAS
-app.delete('/asesorias/:id', (req,res) => {
+app.delete('/asesorias/:id', (req, res) => {
 
     try {
         const id = req.params;
         connection.query('DELETE FROM asesora WHERE id_asesoria = ?', [id.id], (err) => {
             if (err) {
-        
+
                 res.status(500);
-        
+
             } else {
-                
-                res.status(200).send({msg: 'Aseosria Eliminada'})
+
+                res.status(200).send({ msg: 'Aseosria Eliminada' })
             }
         })
     } catch (error) {
-     
+
     }
 
 })
 
-app.delete('/audiencias/:id', (req,res) => {
+app.delete('/audiencias/:id', (req, res) => {
 
     try {
         const id_audiencia = req.params;
-        
+
         connection.query('DELETE FROM audiencia WHERE id_audiencia = ? ', [id_audiencia.id], (err) => {
 
             if (err) {
-                 res.status(500)
+                res.status(500)
             } else {
 
-                res.status(200).send( { msg: 'Audiencia Eliminada Correctamente'})
+                res.status(200).send({ msg: 'Audiencia Eliminada Correctamente' })
             }
         })
     } catch (error) {
-        
+
     }
 })
-app.delete('/asuntos/:id', (req,res) => {
+app.delete('/asuntos/:id', (req, res) => {
 
     try {
         const id_asunto = req.params;
-   
-        
+
+
         connection.query('DELETE FROM asunto WHERE id_asunto = ? ', [id_asunto.id], (err) => {
 
             if (err) {
-                 res.status(500)
+                res.status(500)
             } else {
 
-                res.status(200).send( { msg: 'Asunto Eliminada Correctamente'})
+                res.status(200).send({ msg: 'Asunto Eliminada Correctamente' })
             }
         })
     } catch (error) {
-        
+
     }
 })
 
 //END POINT FOR DELETE CLIENTES
-app.delete('/delete/cliente/:id', (req,res) => {
+app.delete('/delete/cliente/:id', (req, res) => {
 
 
     const { id } = req.params
-   
+
 
     connection.query('DELETE FROM cliente WHERE id_cliente = ?', [id], (e) => {
         if (e) {
-            res.status(500).send({msg: 'Error'})
+            res.status(500).send({ msg: 'Error' })
         } else {
-            res.status(200).send({ msg: 'Registro Eliminado con Exito'})
+            res.status(200).send({ msg: 'Registro Eliminado con Exito' })
         }
 
 
@@ -693,7 +599,7 @@ app.delete('/delete/cliente/:id', (req,res) => {
 })
 
 
-app.delete('/demandado/:id', (req,res) => {
+app.delete('/demandado/:id', (req, res) => {
 
     try {
 
@@ -701,19 +607,142 @@ app.delete('/demandado/:id', (req,res) => {
         connection.query('DELETE FROM persona WHERE id_demandado = ? ', [id_persona.id], (err) => {
 
             if (err) {
-                 res.status(500)
+                res.status(500)
             } else {
 
-                res.status(200).send( { msg: 'Cliente Eliminada Correctamente'})
+                res.status(200).send({ msg: 'Cliente Eliminada Correctamente' })
             }
         })
     } catch (error) {
-        
+
     }
 })
 
-app.put('/update/abogado/:id', (req,res) => {
-    
+
+
+// UPDATE DATA
+
+app.put('/update/abogado/:id', (req, res) => {
+    const data = { paterno, materno, nombre, RFC, cedula , id_grado} = req.body;
+
+    const id_abogado = req.params.id;
+
+
+    connection.query(`
+        UPDATE abogado 
+        SET paterno = "${data.paterno}",
+        materno = "${data.materno}",
+        nombre = "${data.nombre}",
+        RFC = "${data.RFC}",
+        cedula = "${data.cedula}",
+        id_grado = ${id_grado}
+        WHERE id_abogado = ${id_abogado}`, (err, result) => {
+        if (err) {
+            res.status(500)
+        } else {
+            res.status(200).send({ msg: 'Actualizacion con Exito' });
+
+        }
+    });
 })
 
+
+app.put('/update/asesoria/:id', (req,res) => {
+
+    const id = req.params.id;
+    const data = {fecha, tema, hora, id_asunto, asesor,asesorado} = req.body;
+
+   
+    connection.query(`UPDATE asesora 
+    SET fecha = "${data.fecha}",
+    tema = "${data.tema}",
+    hora = "${data.hora}",
+    id_asunto = ${data.id_asunto},
+    asesor = ${data.asesor},
+    asesorado = ${data.asesorado}
+    WHERE id_asesoria = ${id}
+    
+    
+    `, (err) => {
+        if (err) {
+            res.status(500)
+        } else {
+            res.status(200).send({ msg: 'Actualizacion con Exito' });
+
+        }
+    });
+})
+
+app.put('/update/audiencia/:id', ( req, res ) => {
+
+    const id = req.params.id;
+    const data = { id_lugar, fecha, hora, resolucion, id_asunto } = req.body;
+
+    connection.query(`UPDATE audiencia SET id_lugar = ${data.id_lugar},
+    fecha = "${data.fecha}",
+    hora = "${data.hora}",
+    resolucion = "${data.resolucion}",
+    id_asunto = "${id_asunto}"
+    WHERE id_audiencia = ${id}
+    `, (err) => {
+        if (err) {
+            res.status(500)
+        } else {
+            res.status(200).send({ msg: 'Actualizacion con Exito' });
+
+        }
+    })
+
+});
+
+
+app.put('/update/asuntos/:id', (req, res) => {
+    const id = req.params.id;
+    const  data = { id_cliente, id_demandado, id_estado, id_tipo_asu, id_abogado, F_inicio, F_final} = req.body;
+
+    connection.query(`UPDATE asunto 
+    SET id_cliente = ${data.id_cliente},
+     id_demandado = ${data.id_demandado},
+     id_estado = ${data.id_estado},
+     id_tipo_asu = ${data.id_tipo_asu},
+     id_abogado = ${data,id_abogado},
+     F_inicio = "${data.F_inicio}",
+     F_final = "${data.F_final}"
+     WHERE id_asunto = ${id}
+    `, (err) => {
+        if (err) {
+            res.status(500)
+        } else {
+            res.status(200).send({ msg: 'Actualizacion con Exito' });
+
+        }
+    });
+});
+
+
+app.put('/update/clientes/:id', ( req, res ) => {
+
+    const id = req.params.id;
+    const data = { paterno, materno, nombre, CURP , RFC } = req.body;
+    
+    // console.log(data);
+    connection.query(`UPDATE cliente
+    SET paterno = "${data.paterno}",
+    materno = "${data.materno}",
+    nombre = "${data.nombre}",
+    CURP = "${data.CURP}",
+    RFC = "${data.RFC}"
+    WHERE id_cliente = ${id}`, (err) => {
+
+        if (err) {
+            res.status(500)
+        } else {
+            res.status(200).send({ msg: 'Actualizacion con Exito' });
+
+        }
+    })
+
+});
 app.listen(PORT.PORT, () => console.log(`Server Enabled to ${PORT.PORT}`))
+
+
