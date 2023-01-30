@@ -12,12 +12,12 @@ const controller = require('./controllers/app.controller');
 
 app.use(cors());
 app.use(bodyParser.json());
-router(app);
+
 //ver las tablas de las base de datos
-// app.get('/', controller.inde)
+app.get('/', controller.index)
 
 //Validacion de inicio de sesion
-// app.post('/sigIn', controller.login)
+app.post('/sigIn', controller.login)
 
 //Insertar Usuarios
 app.post('/signUp', controller.signUp);
@@ -662,7 +662,6 @@ app.put('/update/asesoria/:id', (req,res) => {
     asesorado = ${data.asesorado}
     WHERE id_asesoria = ${id}
     
-    
     `, (err) => {
         if (err) {
             res.status(500)
@@ -743,6 +742,50 @@ app.put('/update/clientes/:id', ( req, res ) => {
     })
 
 });
+
+
+app.put('/update/demandados/:id', (req,res) => {
+    const id = req.params.id
+    // res.send(id)
+    const data = {direccion, tipo , paterno, materno, nombre, razon_social} = req.body;
+    connection.query(
+        `UPDATE demandado SET 
+        direccion = "${data.direccion}",
+        id_tipo = ${data.tipo} WHERE id_demandado = ${id}`, (err) => {
+            if (err) {
+                throw err
+            } else {
+                res.status(200).send('Registro Exitoso');
+                connection.query(`UPDATE persona SET 
+                paterno = "${data.paterno}",
+                materno = "${data.materno}",
+                nombre = "${data.nombre}"
+                WHERE id_demandado = ${id}
+               `, (err) => {
+    
+                if (err) {
+                    res.status(500)
+                } else {
+                    console.log('Update Person')
+                    // res.status(200).send({ msg: 'Actualizacion con Exito' });
+                    connection.query(`UPDATE empresa SET razon_social = "${data.razon_social}"
+                    WHERE id_demandado = ${id}`,
+                   (err) => {
+                       if (err) {
+                           throw err
+                       } else {
+                           console.log('UPDATE EMPRESA');
+                       }
+                   });
+                }
+            })
+            }
+        }
+        
+    );
+   
+})
+
 app.listen(PORT.PORT, () => console.log(`Server Enabled to ${PORT.PORT}`))
 
 
